@@ -305,18 +305,17 @@ namespace Sep.Git.Tfs.Core
 
         public string GetCommitMessage(string head, string parentCommitish)
         {
-            string message = string.Empty;
-            using (var logMessage = CommandOutputPipe("log", parentCommitish + ".." + head))
-            {
-                string line;
-                while (null != (line = logMessage.ReadLine()))
-                {
-                    if (!line.StartsWith("   "))
-                        continue;
-                    message += line.TrimStart() + Environment.NewLine;
-                }
+            System.Text.StringBuilder message = new System.Text.StringBuilder();
+            LibGit2Sharp.Repository repo = new LibGit2Sharp.Repository(GitDir);
+            IEnumerator<LibGit2Sharp.Commit> walker = repo.Commits.GetEnumerator();
+
+            // TODO: Walk to the head specified, before appending to message
+            // while(walker.MoveNext() && walker.Current.Id.Sha != head){Console.WriteLine(walker.Current.Id.Sha + " skipped");}
+
+            while(walker.MoveNext() && walker.Current.Id.Sha != parentCommitish){
+                message.Append(walker.Current.Message + Environment.NewLine);
             }
-            return message;
+            return message.ToString();
         }
 
         private void ParseEntries(IDictionary<string, GitObject> entries, string treeInfo, string commit)
