@@ -305,14 +305,12 @@ namespace Sep.Git.Tfs.Core
         public string GetCommitMessage(string head, string parentCommitish)
         {
             System.Text.StringBuilder message = new System.Text.StringBuilder();
-            LibGit2Sharp.Repository repo = new LibGit2Sharp.Repository(GitDir);
-            IEnumerator<LibGit2Sharp.Commit> walker = repo.Commits.GetEnumerator();
-
-            // TODO: Walk to the head specified, before appending to message
-            // while(walker.MoveNext() && walker.Current.Id.Sha != head){Console.WriteLine(walker.Current.Id.Sha + " skipped");}
-
-            while(walker.MoveNext() && walker.Current.Id.Sha != parentCommitish){
-                message.Append(walker.Current.Message + Environment.NewLine);
+            using(LibGit2Sharp.Repository repo = new LibGit2Sharp.Repository(GitDir)){
+                LibGit2Sharp.Filter filter = new LibGit2Sharp.Filter { Since = head, Until = parentCommitish };
+                foreach (LibGit2Sharp.Commit comm in repo.Commits.QueryBy(filter))
+                {
+                    message.AppendLine(comm.Message);
+                }
             }
             return message.ToString();
         }
