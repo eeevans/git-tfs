@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using GitSharp.Core;
 using Sep.Git.Tfs.Commands;
 using StructureMap;
 using FileMode = GitSharp.Core.FileMode;
@@ -17,7 +16,7 @@ namespace Sep.Git.Tfs.Core
         private readonly Globals _globals;
         private static readonly Regex configLineRegex = new Regex("^tfs-remote\\.(?<id>[^.]+)\\.(?<key>[^.=]+)=(?<value>.*)$");
         private IDictionary<string, IGitTfsRemote> _cachedRemotes;
-        private Repository _repository;
+        private GitSharp.Core.Repository _repository;
 
         public GitRepository(TextWriter stdout, string gitDir, IContainer container, Globals globals)
             : base(stdout, container)
@@ -25,7 +24,7 @@ namespace Sep.Git.Tfs.Core
             _container = container;
             _globals = globals;
             GitDir = gitDir;
-            _repository = new Repository(new DirectoryInfo(gitDir));
+            _repository = new GitSharp.Core.Repository(new DirectoryInfo(gitDir));
         }
 
         public string GitDir { get; set; }
@@ -417,21 +416,21 @@ namespace Sep.Git.Tfs.Core
 
         public string HashAndInsertObject(string filename)
         {
-            var writer = new ObjectWriter(_repository);
+            var writer = new GitSharp.Core.ObjectWriter(_repository);
             var objectId = writer.WriteBlob(new FileInfo(filename));
             return objectId.Name;
         }
 
         public string HashAndInsertObject(Stream file)
         {
-            var writer = new ObjectWriter(_repository);
+            var writer = new GitSharp.Core.ObjectWriter(_repository);
             var objectId = writer.WriteBlob(file.Length, file);
             return objectId.Name;
         }
 
         public string HashAndInsertObject(Stream file, long length)
         {
-            var writer = new ObjectWriter(_repository);
+            var writer = new GitSharp.Core.ObjectWriter(_repository);
             var objectId = writer.WriteBlob(length, file);
             return objectId.Name;
         }
