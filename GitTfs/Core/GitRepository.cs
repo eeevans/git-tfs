@@ -305,9 +305,10 @@ namespace Sep.Git.Tfs.Core
         public string GetCommitMessage(string head, string parentCommitish)
         {
             System.Text.StringBuilder message = new System.Text.StringBuilder();
-            using(LibGit2Sharp.Repository repo = new LibGit2Sharp.Repository(GitDir)){
-                LibGit2Sharp.Filter filter = new LibGit2Sharp.Filter { Since = head, Until = parentCommitish };
-                foreach (LibGit2Sharp.Commit comm in repo.Commits.QueryBy(filter))
+            using(LibGit2Sharp.Repository repo = new LibGit2Sharp.Repository(GitDir))
+            {
+                foreach (LibGit2Sharp.Commit comm in
+                    repo.Commits.QueryBy(new LibGit2Sharp.Filter { Since = head, Until = parentCommitish }))
                 {
                     message.AppendLine(comm.Message);
                 }
