@@ -400,16 +400,23 @@ namespace Sep.Git.Tfs.Core
 
         public void GetBlob(string sha, string outputFile)
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(outputFile));
-            CommandOutputPipe(stdout => Copy(stdout, outputFile), "cat-file", "-p", sha);
+            using(LibGit2Sharp.Repository repo = new LibGit2Sharp.Repository(GitDir))
+            {
+                LibGit2Sharp.ObjectId objId;
+                LibGit2Sharp.Blob blob;
+                if (LibGit2Sharp.ObjectId.TryParse(sha, out objId) &&
+                    (blob = (LibGit2Sharp.Blob) repo.Lookup(objId, LibGit2Sharp.GitObjectType.Blob)) != null)
+                {
+                    Copy(blob.ContentStream, outputFile);
+                }
+            }
         }
 
-        private void Copy(TextReader stdout, string file)
+        private void Copy(Stream gitstream, string file)
         {
-            var stdoutStream = ((StreamReader) stdout).BaseStream;
             using (var destination = File.Create(file))
             {
-                stdoutStream.CopyTo(destination);
+                gitstream.CopyTo(destination);
             }
         }
 
