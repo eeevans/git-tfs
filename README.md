@@ -38,7 +38,9 @@ git-tfs is a two-way bridge between TFS and git, similar to git-svn.
 
 [Download](https://github.com/git-tfs/git-tfs/downloads#uploaded_downloads) or build.
 
-Add the directory that contains git-tfs.exe to your path. 
+Add the directory that contains git-tfs.exe to your path.  
+in powershell : `$env:Path += ";c:\tools\git-tfs\"`  
+non-powershell users [see this](http://geekswithblogs.net/renso/archive/2009/10/21/how-to-set-the-windows-path-in-windows-7.aspx) 
 
 I've been using this with [msysgit 1.7.3.1](http://code.google.com/p/msysgit/) for a while.
 
@@ -47,15 +49,22 @@ You need .NET 4 and either the 2008 or 2010 version of Team Explorer installed.
 
 ## Building
 
-msbuild (included in .NET 4) should be able to build the entire solution.
+### Prerequisites 
+
+* [Visual Studio 2010 SDK](http://www.microsoft.com/downloads/en/details.aspx?FamilyID=21307C23-F0FF-4EF2-A0A4-DCA54DDB1E21&displaylang=en)
+* [Visual Studio 2008 SDK](http://www.microsoft.com/download/en/details.aspx?id=21827)
+* MSBuild (included in .NET 4) 
+
+### Building
 
 Use `msbuild GitTfs.sln /p:Configuration=Vs2010_Debug` to build for the 2010 version only.
 
 You can also do `rake build:debug`.
 
+## Contributing
+
 If you contribute patches, please set `core.autocrlf` to `true`. (`git config core.autocrlf true`)
 
-## Contributing
 
 Contributions are always welcome. For more information about contributing,
 please see [the wiki](http://github.com/git-tfs/git-tfs/wiki/Contributing).
