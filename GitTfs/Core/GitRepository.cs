@@ -405,16 +405,15 @@ namespace Sep.Git.Tfs.Core
             {
                 Blob blob;
                 if ((blob = repo.Lookup<Blob>(sha)) != null)
-                    Copy(blob.ContentStream, outputFile);
+                    using (Stream stream = blob.ContentStream)
+                        Copy(stream, outputFile);
             }
         }
 
         private void Copy(Stream gitstream, string file)
         {
             using (var destination = File.Create(file))
-            {
                 gitstream.CopyTo(destination);
-            }
         }
 
         public string HashAndInsertObject(string filename)
