@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using Sep.Git.Tfs.Commands;
 using StructureMap;
 using FileMode = GitSharp.Core.FileMode;
+using LibGit2Sharp;
 
 namespace Sep.Git.Tfs.Core
 {
@@ -402,13 +403,9 @@ namespace Sep.Git.Tfs.Core
         {
             using(LibGit2Sharp.Repository repo = new LibGit2Sharp.Repository(GitDir))
             {
-                LibGit2Sharp.ObjectId objId;
-                LibGit2Sharp.Blob blob;
-                if (LibGit2Sharp.ObjectId.TryParse(sha, out objId) &&
-                    (blob = (LibGit2Sharp.Blob) repo.Lookup(objId, LibGit2Sharp.GitObjectType.Blob)) != null)
-                {
+                Blob blob;
+                if ((blob = repo.Lookup<Blob>(sha)) != null)
                     Copy(blob.ContentStream, outputFile);
-                }
             }
         }
 
