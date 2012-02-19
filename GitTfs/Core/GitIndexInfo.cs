@@ -57,9 +57,13 @@ namespace Sep.Git.Tfs.Core
             return ++nr;
         }
 
-        public int Update(string mode, string path, Stream stream, long length)
+        public int Update(string mode, string path, Stream stream)
         {
-            var sha = repository.HashAndInsertObject(stream, length);
+            if(mode == Mode.NewFile)
+                stream.CopyTo(File.Create(path));
+            else
+                stream.CopyTo(File.OpenWrite(path));
+            var sha = repository.HashAndInsertObject(path);
             Trace.WriteLine("   U " + sha + " = " + path);
             stdin.Write(mode);
             stdin.Write(' ');
