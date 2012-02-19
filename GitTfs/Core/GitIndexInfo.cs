@@ -59,10 +59,13 @@ namespace Sep.Git.Tfs.Core
 
         public int Update(string mode, string path, Stream stream)
         {
+            FileStream fstream;
             if(mode == Mode.NewFile)
-                stream.CopyTo(File.Create(path));
+                fstream = File.Create(path);
             else
-                stream.CopyTo(File.OpenWrite(path));
+                fstream = File.OpenWrite(path);
+            using(fstream)
+                stream.CopyTo(fstream);
             var sha = repository.HashAndInsertObject(path);
             Trace.WriteLine("   U " + sha + " = " + path);
             stdin.Write(mode);
