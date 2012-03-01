@@ -387,10 +387,10 @@ namespace Sep.Git.Tfs.Core
                 using (LibGit2Sharp.Repository repo = new LibGit2Sharp.Repository(GitDir))
                 {
                     RepositoryStatus status = repo.Index.RetrieveStatus();
-                    var res = from states in status
-                              where states.State != FileStatus.Ignored
-                                  || states.State != FileStatus.Untracked
-                              select states;
+                    var res = from entry in status
+                              where entry.State != FileStatus.Ignored
+                                  || entry.State != FileStatus.Untracked
+                              select entry;
                     return res.Count() > 0;
                 }
             }
